@@ -92,9 +92,7 @@ int main(int argc, char** argv) {
             if (op == "delete" && in >> id) {
                 msg = one(op, id);
             } else if ((op == "add" || op == "update") && in >> id >> name >> age >> grade) {
-                // The CLI command is named "add", while the WebSocket protocol
-                // uses "create". Keep the user-friendly command and send the
-                // operation the server expects.
+                // "add" on CLI maps to "create" in the WebSocket protocol
                 msg = one(op == "add" ? "create" : "update", id, name, age, grade);
             } else if (op == "sort") {
                 msg = "{\"type\":\"sort\"}";
