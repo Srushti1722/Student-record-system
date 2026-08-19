@@ -1,0 +1,41 @@
+# Build output
+build/
+out/
+cmake-build-*/
+
+# Compiled binaries and object files
+*.exe
+*.dll
+*.lib
+*.obj
+*.o
+*.pdb
+*.ilk
+*.exp
+*.idb
+*.ipdb
+*.iobj
+*.pch
+
+# Generated / runtime CSV files (created by demo and tests at runtime)
+demo_data.csv
+
+# Visual Studio
+.vs/
+*.vcxproj.user
+*.suo
+*.user
+*.VC.db
+*.VC.opendb
+
+# vcpkg local installs
+vcpkg_installed/
+
+# VS Code — keep shared tasks, ignore personal state
+.vscode/*
+!.vscode/tasks.json
+!.vscode/extensions.json
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Record System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        header p { opacity: 0.9; }
+        main { padding: 30px; }
+        
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .panel {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .panel h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+        
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            grid-column: 1 / -1;
+        }
+        
+        .btn-primary:hover { background: #5568d3; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
+        .btn-primary:active { transform: translateY(0); }
+        
+        .btn-danger { background: #ff6b6b; color: white; }
+        .btn-danger:hover { background: #ff5252; }
+        
+        .btn-success { background: #51cf66; color: white; }
+        .btn-success:hover { background: #40c057; }
+        
+        .student-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .student-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 12px;
+            transition: all 0.3s;
+        }
+        
+        .student-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateX(5px);
+        }
+        
+        .student-card h3 {
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+        
+        .student-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .info-item { display: flex; justify-content: space-between; }
+        .info-item strong { color: #333; }
+        
+        .card-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-edit { background: #4dabf7; color: white; }
+        .btn-edit:hover { background: #339af0; }
+        
+        .btn-delete { background: #ff8c8c; color: white; }
+        .btn-delete:hover { background: #ff7373; }
+        
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .metric {
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .metric-label {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+        
+        .alert {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .alert-show { display: block; animation: slideIn 0.3s ease; }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .search-box input {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        
+        .search-box button { flex: 0 0 auto; width: auto; margin-bottom: 0; }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+        
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .layout { grid-template-columns: 1fr; }
+            .button-group { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 Student Record System</h1>
+            <p>Manage student records efficiently</p>
+        </header>
+        <main>
+            <div id="alert" class="alert"></div>
+            
+            <div class="layout">
+                <!-- Add/Edit Panel -->
+                <div class="panel">
+                    <h2>✏️ Add Student</h2>
+                    <input type="number" id="studentId" placeholder="Student ID" min="1">
+                    <input type="text" id="studentName" placeholder="Full Name">
+                    <input type="number" id="studentAge" placeholder="Age" min="1" max="150">
+                    <input type="text" id="studentGrade" placeholder="Grade (e.g., A, B+, A-)">
+                    <div class="button-group">
+                        <button class="btn-primary" onclick="addStudent()">➕ Add Student</button>
+                    </div>
+                    
+                    <h2 style="margin-top: 30px;">🔍 Search</h2>
+                    <div class="search-box">
+                        <input type="text" id="searchQuery" placeholder="Search by name or ID..." onkeydown="if(event.key==='Enter') searchStudents()">
+                        <button class="btn-success btn-small" onclick="searchStudents()" style="width: auto; padding: 12px 20px;">Search</button>
+                        <button class="btn-small" onclick="clearSearch()" style="width: auto; padding: 12px 16px; background:#aaa; color:white;">✕ Clear</button>
+                    </div>
+                    
+                    <div class="button-group" style="grid-template-columns: 1fr 1fr 1fr;">
+                        <button class="btn-primary" onclick="sortStudents('name')">⬆️ Sort by Name</button>
+                        <button class="btn-primary" onclick="sortStudents('id')" style="background: #4dabf7;">⬆️ Sort by ID</button>
+                        <button class="btn-primary" onclick="sortStudents('grade')" style="background: #9c27b0;">⬆️ Sort by Grade</button>
+                    </div>
+                    
+                    <div class="metrics">
+                        <div class="metric">
+                            <div class="metric-value" id="totalRecords">0</div>
+                            <div class="metric-label">Total Records</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value" id="loadTime">0</div>
+                            <div class="metric-label">Load (ms)</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value" id="saveTime">0</div>
+                            <div class="metric-label">Save (ms)</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Student List Panel -->
+                <div class="panel">
+                    <h2>👥 Students</h2>
+                    <div class="student-list" id="studentList">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📭</div>
+                            <p>No students yet. Add one to get started!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        const WS_URL = 'ws://localhost:8080';
+        let socket;
+        let students = [];
+        let currentSearch = '';
+        let editingId = null;
+
+        function connect() {
+            socket = new WebSocket(WS_URL);
+            socket.onopen = () => showAlert('Connected to the live server', 'success');
+            socket.onmessage = event => {
+                try {
+                    const data = JSON.parse(event.data);
+                    if (data.type === 'students') {
+                        students = data.students || [];
+                        updateMetrics(data.metrics || {});
+                        displayStudents();
+                    } else if (data.type === 'error') {
+                        showAlert(data.message || 'Server error', 'error');
+                    }
+                } catch (error) {
+                    console.error('Invalid server message:', error);
+                }
+            };
+            socket.onerror = () => showAlert('Could not connect to the WebSocket server', 'error');
+            socket.onclose = () => {
+                showAlert('Server disconnected. Reconnecting…', 'error');
+                setTimeout(connect, 2000);
+            };
+        }
+
+        function send(message) {
+            if (!socket || socket.readyState !== WebSocket.OPEN) {
+                showAlert('Server is not connected yet', 'error');
+                return false;
+            }
+            socket.send(JSON.stringify(message));
+            return true;
+        }
+
+        function displayStudents() {
+            const list = document.getElementById('studentList');
+            const needle = currentSearch.toLowerCase();
+            const visible = students.filter(s => !needle ||
+                s.name.toLowerCase().includes(needle) || String(s.id).includes(needle));
+            if (visible.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <p>No students yet. Add one to get started!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = visible.map(s => `
+                <div class="student-card">
+                    <h3>${s.name}</h3>
+                    <div class="student-info">
+                        <div class="info-item"><strong>ID:</strong> <span>${s.id}</span></div>
+                        <div class="info-item"><strong>Age:</strong> <span>${s.age}</span></div>
+                        <div class="info-item"><strong>Grade:</strong> <span>${s.grade}</span></div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-small btn-edit" data-edit="${s.id}">Edit</button>
+                        <button class="btn-small btn-delete" data-delete="${s.id}">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+            list.querySelectorAll('[data-edit]').forEach(button =>
+                button.addEventListener('click', () => editStudent(Number(button.dataset.edit))));
+            list.querySelectorAll('[data-delete]').forEach(button =>
+                button.addEventListener('click', () => deleteStudent(Number(button.dataset.delete))));
+        }
+        
+        function updateMetrics(metrics) {
+            document.getElementById('totalRecords').textContent = metrics.records || 0;
+            document.getElementById('loadTime').textContent = (metrics.load_us / 1000).toFixed(1);
+            document.getElementById('saveTime').textContent = (metrics.save_us / 1000).toFixed(1);
+        }
+        
+        function addStudent() {
+            const id = document.getElementById('studentId').value;
+            const name = document.getElementById('studentName').value;
+            const age = document.getElementById('studentAge').value;
+            const grade = document.getElementById('studentGrade').value;
+            
+            if (!id || !name || !age || !grade) {
+                showAlert('Please fill all fields', 'error');
+                return;
+            }
+            
+            if (send({ type: 'create', id: Number(id), name, age: Number(age), grade })) clearForm();
+        }
+        
+        function editStudent(id) {
+            const student = students.find(s => s.id === id);
+            if (!student) return;
+            editingId = id;
+            document.getElementById('studentId').value = id;
+            document.getElementById('studentName').value = student.name;
+            document.getElementById('studentAge').value = student.age;
+            document.getElementById('studentGrade').value = student.grade;
+            document.getElementById('studentId').disabled = true;
+            document.querySelector('.btn-primary').textContent = '✏️ Update Student';
+            document.querySelector('.btn-primary').onclick = updateStudent;
+        }
+        
+        function updateStudent() {
+            const id = document.getElementById('studentId').value;
+            const name = document.getElementById('studentName').value;
+            const age = document.getElementById('studentAge').value;
+            const grade = document.getElementById('studentGrade').value;
+            
+            if (send({ type: 'update', id: Number(id), name, age: Number(age), grade })) clearForm();
+        }
+        
+        function deleteStudent(id) {
+            if (!confirm('Are you sure you want to delete this student?')) return;
+            send({ type: 'delete', id });
+        }
+        
+        function searchStudents() {
+            const query = document.getElementById('searchQuery').value.trim();
+            currentSearch = query;
+            displayStudents();
+        }
+
+        function clearSearch() {
+            currentSearch = '';
+            document.getElementById('searchQuery').value = '';
+            displayStudents();
+        }
+        
+        function sortStudents(type = 'name') {
+            send({ type: 'sort', by: type });
+        }
+
+        function clearForm() {
+            editingId = null;
+            document.getElementById('studentId').disabled = false;
+            document.getElementById('studentId').value = '';
+            document.getElementById('studentName').value = '';
+            document.getElementById('studentAge').value = '';
+            document.getElementById('studentGrade').value = '';
+            document.querySelector('.btn-primary').textContent = '➕ Add Student';
+            document.querySelector('.btn-primary').onclick = addStudent;
+        }
+        
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert alert-${type} alert-show`;
+            setTimeout(() => alert.classList.remove('alert-show'), 3000);
+        }
+        
+        connect();
+    </script>
+</body>
+</html>
